@@ -262,11 +262,11 @@ uint32_t OMXCodec::getComponentQuirks(
         quirks |= kOutputBuffersAreUnreadable;
     }
     if (list->codecHasQuirk(
-                index, "requies-loaded-to-idle-after-allocation")) {
+                index, "requires-loaded-to-idle-after-allocation")) {
       quirks |= kRequiresLoadedToIdleAfterAllocation;
     }
     if (list->codecHasQuirk(
-                index, "requies-flush-before-disable")) {
+                index, "needs-flush-before-disable")) {
       quirks |= kNeedsFlushBeforeDisable;
     }
     if (list->codecHasQuirk(
@@ -274,7 +274,7 @@ uint32_t OMXCodec::getComponentQuirks(
       quirks |= kDecoderLiesAboutNumberOfChannels;
     }
     if (list->codecHasQuirk(
-                index, "requies-flush-complete-emulation")) {
+                index, "requires-flush-complete-emulation")) {
       quirks |= kRequiresFlushCompleteEmulation;
     }
     if (list->codecHasQuirk(
