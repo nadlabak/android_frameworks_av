@@ -1618,6 +1618,8 @@ status_t OMXCodec::allocateBuffersOnPort(OMX_U32 portIndex) {
         BufferInfo info;
         info.mData = NULL;
         info.mSize = def.nBufferSize;
+        info.mAllocatedBuffer = NULL;
+        info.mAllocatedSize = 0;
 
         IOMX::buffer_id buffer;
         if (portIndex == kPortIndexInput
@@ -1898,6 +1900,8 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
         info.mSize = def.nBufferSize;
         info.mStatus = OWNED_BY_US;
         info.mMem = NULL;
+        info.mAllocatedBuffer = NULL;
+        info.mAllocatedSize = 0;
         info.mMediaBuffer = new MediaBuffer(graphicBuffer);
         info.mMediaBuffer->setObserver(this);
         mPortBuffers[kPortIndexOutput].push(info);
@@ -2847,6 +2851,12 @@ status_t OMXCodec::freeBuffer(OMX_U32 portIndex, size_t bufIndex) {
 
     BufferInfo *info = &buffers->editItemAt(bufIndex);
 
+    if (info->mAllocatedBuffer != NULL) {
+        OMX_BUFFERHEADERTYPE *header = (OMX_BUFFERHEADERTYPE *) info->mBuffer;
+        header->pBuffer = info->mAllocatedBuffer;
+        header->nAllocLen = info->mAllocatedSize;
+    }
+
     status_t err = mOMX->freeBuffer(mNode, portIndex, info->mBuffer);
 
     if (err == OK && info->mMediaBuffer != NULL) {
@@ -3187,8 +3197,14 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
 
             CHECK(header->pBuffer == info->mData);
 
+            if (info->mAllocatedBuffer == NULL) {
+                info->mAllocatedBuffer = header->pBuffer;
+                info->mAllocatedSize = header->nAllocLen;
+            }
+
             header->pBuffer =
                 (OMX_U8 *)srcBuffer->data() + srcBuffer->range_offset();
+            header->nAllocLen = srcBuffer->size() - srcBuffer->range_offset();
 
             releaseBuffer = false;
             info->mMediaBuffer = srcBuffer;
