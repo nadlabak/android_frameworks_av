@@ -3517,9 +3517,11 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
                 info->mAllocatedSize = header->nAllocLen;
             }
 
+            ALOGW("drainInputBuffer: orig pBuffer %p, nAllocLen %x", header->pBuffer, header->nAllocLen);
             header->pBuffer =
                 (OMX_U8 *)srcBuffer->data() + srcBuffer->range_offset();
             header->nAllocLen = srcBuffer->size() - srcBuffer->range_offset();
+            ALOGW("drainInputBuffer: new pBuffer %p, nAllocLen %x", header->pBuffer, header->nAllocLen);
 
             releaseBuffer = false;
             info->mMediaBuffer = srcBuffer;
