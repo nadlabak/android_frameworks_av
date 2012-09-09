@@ -152,6 +152,11 @@ private:
         EXECUTING_TO_IDLE,
         IDLE_TO_LOADED,
         RECONFIGURING,
+#ifdef QCOM_HARDWARE
+        PAUSING,
+        FLUSHING,
+        PAUSED,
+#endif
         ERROR
     };
 
@@ -386,11 +391,16 @@ private:
             const void *data, size_t size,
             unsigned *profile, unsigned *level);
 
+#ifdef QCOM_HARDWARE
+    status_t flushBuffersOnError(void);
+#endif
+
     OMXCodec(const OMXCodec &);
     OMXCodec &operator=(const OMXCodec &);
 #ifdef QCOM_HARDWARE
     status_t setWMAFormat(const sp<MetaData> &inputFormat);
     void setAC3Format(int32_t numChannels, int32_t sampleRate);
+    status_t releaseMediaBuffersOn(OMX_U32 portIndex);
 #endif
 };
 
