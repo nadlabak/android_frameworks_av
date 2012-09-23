@@ -3941,13 +3941,6 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
 
     info->mStatus = OWNED_BY_COMPONENT;
 
-    // This component does not ever signal the EOS flag on output buffers,
-    // Thanks for nothing.
-    if (mSignalledEOS && !strcmp(mComponentName, "OMX.TI.Video.encoder")) {
-        mNoMoreOutputData = true;
-        mBufferFilled.signal();
-    }
-
     return true;
 }
 
