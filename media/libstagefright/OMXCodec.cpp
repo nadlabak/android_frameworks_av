@@ -305,6 +305,10 @@ uint32_t OMXCodec::getComponentQuirks(
       quirks |= kSupportsMultipleFramesPerInputBuffer;
     }
     if (list->codecHasQuirk(
+                index, "defers-output-buffer-allocation")) {
+        quirks |= kDefersOutputBufferAllocation;
+    }
+    if (list->codecHasQuirk(
                 index, "input-buffer-sizes-are-bogus")) {
       quirks |= kInputBufferSizesAreBogus;
     }
